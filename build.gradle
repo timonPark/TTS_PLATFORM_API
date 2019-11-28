@@ -1,0 +1,35 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+group = 'ion.ops.tts'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.2.0.RELEASE'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    // json lib
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+    //aws group
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-polly', version: '1.11.662'
+    compile group: 'com.googlecode.soundlibs', name: 'jlayer', version: '1.0.1.4'
+
+    //google group
+    compile group: 'com.google.cloud', name: 'google-cloud-texttospeech', version: '0.117.0-beta'
+    compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}

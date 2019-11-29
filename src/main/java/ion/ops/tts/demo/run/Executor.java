@@ -1,9 +1,12 @@
 package ion.ops.tts.demo.run;
 
 import ion.ops.tts.demo.service.*;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,15 +53,14 @@ public class Executor {
      }
 
      public void execute(String type) throws Exception {
-          setTtsService(type);
-          parameterSetting(type);
-          registerCommonServiceInTtsService();
           ttsService.run();
           ttsService.ttsMp3Download(parameterMap);
      }
 
      public Map<String, Object> responseExecute(String type, MultipartFile multipartFile) throws Exception {
+          initSetting(type);
           if (commonService.isAttachFile(multipartFile)){
+               commonService.attachFileExtractionToText(multipartFile);
                execute(type);
           } else {
                commonService.setNotExistFileSetMessage();
@@ -77,6 +79,7 @@ public class Executor {
           parameterMap.put("apikey." + type + ".filename", environment.getProperty("apikey." + type + ".filename"));
           parameterMap.put("textFile.path", environment.getProperty("textFile.path"));
           parameterMap.put("ttsFile.path", environment.getProperty("ttsFile.path"));
+          parameterMap.put("ttsFile.info.manage.path", environment.getProperty("ttsFile.info.manage.path"));
           parameterMap.put("type", type);
      }
      public void registerCommonServiceInTtsService() {
@@ -97,5 +100,15 @@ public class Executor {
      public Response run(String ttsType) throws Exception {
           execute(ttsType);
           return null;
+     }
+
+     public ResponseEntity<InputStreamResource> ttsFileDownload(String fileName) throws IOException, ParseException {
+          return commonService.downloadTtsFile(fileName);
+     }
+
+     public void initSetting(String type){
+          setTtsService(type);
+          parameterSetting(type);
+          registerCommonServiceInTtsService();
      }
 }

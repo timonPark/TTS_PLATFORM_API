@@ -1,18 +1,26 @@
 package ion.ops.tts.demo.service;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +34,7 @@ public class CommonService {
     private Map<String, Object> parameterMap;
     private Map<String, Object> resultMap;
     private String createFilePath;
+    private String createFileName;
 
     TtsService ttsService;
     public static final String SAMPLE = "나도 알아 나의 문제가 무엇인지\n";
@@ -42,21 +51,27 @@ public class CommonService {
         this.parameterMap = parameterMap;
     }
 
+    public Map<String, Object> getParameterMap() {
+        return parameterMap;
+    }
+
     public Map<String, Object> getResultMap() {
         return resultMap;
     }
 
     public void setCreateFilePath(){
-        createFilePath = mkdirForderRetrunForderPath("ttsFile.path") + "tts_"
+        createFileName = "tts_"
                 + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3";
+        createFilePath = mkdirForderRetrunForderPath("ttsFile.path") + createFileName;
     }
 
-    public void setResultMap(){
+    public void setResultMap() throws IOException, ParseException {
         if (isTtsFile()){
             final String crateSuccessMessage = "TTS File [" + createFilePath + "] making is Success";
+            createTtsFileInfoStore();
             logger.info(crateSuccessMessage);
             resultMap.put("states", crateSuccessMessage);
-            resultMap.put("ttsFileName", createFilePath);
+            resultMap.put("ttsFileName", createFileName);
         } else {
             resultMap.put("states", "TTS File [" + createFilePath + "] making is Fail");
         }
@@ -155,7 +170,7 @@ public class CommonService {
         if (String.valueOf(parameterMap.get("type")).equals("aws")){
             jsonObject.put("accessKey", "");
             jsonObject.put("secretKey", "");
-        } else if (String.valueOf(parameterMap.get("type")).equals("naver")){
+        } else if (String.valueOf(parameterMap.get("type")).equals("ncp")){
             jsonObject.put("clientId", "");
             jsonObject.put("clientSecret", "");
         }
@@ -233,8 +248,57 @@ public class CommonService {
         return !multipartFile.isEmpty();
     }
 
+    public void attachFileExtractionToText(MultipartFile multipartFile) throws IOException {
+        byte[] bytes = multipartFile.getBytes();
+        final String textFilePath = mkdirForderRetrunForderPath("textFile.path") + multipartFile.getOriginalFilename();
+        Path path = Paths.get(textFilePath);
+        Files.write(path, bytes);
+        parameterMap.put("attachFileInText",readTextFile(textFilePath));
+    }
+
     public void setNotExistFileSetMessage(){
         resultMap.put("states", "attach file not exist");
+    }
+
+    // ttsFile.info.manage.path
+    public void createTtsFileInfoStore() throws IOException, ParseException {
+        File file = new File(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+        if (!file.exists()){
+            FileWriter fileWriter = new FileWriter(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(createFileName, createFilePath);
+
+            fileWriter.write(jsonObject.toJSONString());
+            fileWriter.close();
+        } else {
+            FileReader fileReader = new FileReader(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(fileReader);
+            jsonObject.put(createFileName, createFilePath);
+            fileReader.close();
+            FileWriter fileWriter = new FileWriter(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+            fileWriter.write(jsonObject.toJSONString());
+            fileWriter.close();
+        }
+    }
+
+    public String ttsManageFileSearchByTtsFileName(String ttsFileName) throws IOException, ParseException {
+        FileReader fileReader = new FileReader(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(fileReader);
+        return String.valueOf(jsonObject.get(ttsFileName));
+    }
+
+    public ResponseEntity<InputStreamResource> downloadTtsFile(String ttsFileName) throws IOException, ParseException {
+
+        File ttsFile = new File(ttsManageFileSearchByTtsFileName(ttsFileName));
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(ttsFile));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + ttsFileName)
+                .contentType(MediaType.parseMediaType("audio/mpeg"))
+                .contentLength(ttsFile.length())
+                .body(resource);
     }
 
 

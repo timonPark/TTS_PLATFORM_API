@@ -4,6 +4,7 @@ import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -36,7 +37,7 @@ public class GoogleTtsService implements TtsService {
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create(settings)) {
             // Set the text input to be synthesized
             SynthesisInput input = SynthesisInput.newBuilder().setText(
-                    commonService.readTextFile(commonService.mkdirForderRetrunForderPath("textFile.path")+"upload.json")
+                    String.valueOf(commonService.getParameterMap().get("attachFileInText"))
             ).build();
             // Build the voice request
             VoiceSelectionParams voice =
@@ -57,7 +58,7 @@ public class GoogleTtsService implements TtsService {
     }
 
     @Override
-    public void ttsMp3Download( Map<String, Object> parameterMap) {
+    public void ttsMp3Download( Map<String, Object> parameterMap) throws IOException, ParseException {
         commonService.setCreateFilePath();
         commonService.googleCreateMp3File();
         commonService.setResultMap();

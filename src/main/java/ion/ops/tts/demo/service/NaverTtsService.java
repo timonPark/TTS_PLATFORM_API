@@ -18,7 +18,7 @@ public class NaverTtsService implements TtsService {
     private Map<String, Object> parameterMap;
 
     @Override
-    public void ttsMp3Download(Map<String, Object> parameterMap) {
+    public void ttsMp3Download(Map<String, Object> parameterMap) throws IOException, ParseException {
         commonService.setResultMap();
     }
 
@@ -34,7 +34,7 @@ public class NaverTtsService implements TtsService {
         String clientSecret = String.valueOf(commonService.keyLoad().get("clientSecret"));//애플리케이션 클라이언트 시크릿값";
 
         String text = URLEncoder.encode(
-                commonService.readTextFile(commonService.mkdirForderRetrunForderPath("textFile.path")+"upload.json")
+                String.valueOf(commonService.getParameterMap().get("attachFileInText"))
                 , "UTF-8"); // 13자
         String apiURL = "https://naveropenapi.apigw.ntruss.com/voice/v1/tts";
         URL url = new URL(apiURL);

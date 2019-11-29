@@ -44,15 +44,14 @@ public class AwsTtsService implements TtsService {
         voice = describeVoicesResult.getVoices().get(0);
         SynthesizeSpeechRequest synthReq =
                 new SynthesizeSpeechRequest().withText(
-                        commonService.readTextFile
-                                (commonService.mkdirForderRetrunForderPath("textFile.path")+"upload.json"))
+                        String.valueOf(commonService.getParameterMap().get("attachFileInText")))
                         .withVoiceId(VoiceId.Seoyeon)
                         .withOutputFormat(OutputFormat.Mp3);
         synthRes = polly.synthesizeSpeech(synthReq);
     }
 
     @Override
-    public void ttsMp3Download(Map<String, Object> parameterMap) {
+    public void ttsMp3Download(Map<String, Object> parameterMap) throws IOException, ParseException {
         commonService.setCreateFilePath();
         commonService.awsCreateMp3File();
         commonService.setResultMap();

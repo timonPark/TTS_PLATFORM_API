@@ -19,7 +19,7 @@ public class NaverTtsService implements TtsService {
 
     @Override
     public void ttsMp3Download(Map<String, Object> parameterMap) {
-
+        commonService.setResultMap();
     }
 
     @Override
@@ -29,6 +29,7 @@ public class NaverTtsService implements TtsService {
 
     @Override
     public void run() throws IOException, ClassNotFoundException, ParseException {
+        commonService.setCreateFilePath();
         String clientId = String.valueOf(commonService.keyLoad().get("clientId"));//애플리케이션 클라이언트 아이디값";
         String clientSecret = String.valueOf(commonService.keyLoad().get("clientSecret"));//애플리케이션 클라이언트 시크릿값";
 

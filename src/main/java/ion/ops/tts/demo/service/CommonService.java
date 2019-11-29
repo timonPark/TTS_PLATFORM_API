@@ -5,7 +5,10 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.*;
@@ -17,24 +20,52 @@ import java.util.Map;
 
 @Component
 public class CommonService {
+    private Logger logger = LoggerFactory.getLogger(CommonService.class);
+
     private FileOutputStream outputStream;
     private Map<String, Object> parameterMap;
+    private Map<String, Object> resultMap;
+    private String createFilePath;
 
     TtsService ttsService;
     public static final String SAMPLE = "나도 알아 나의 문제가 무엇인지\n";
+    public CommonService(){
+        resultMap = new HashMap<String, Object>();
+    }
 
     public void setTtsService(TtsService ttsService) {
         this.ttsService = ttsService;
     }
 
+
     public void setParameterMap(Map<String, Object> parameterMap) {
         this.parameterMap = parameterMap;
     }
 
+    public Map<String, Object> getResultMap() {
+        return resultMap;
+    }
+
+    public void setCreateFilePath(){
+        createFilePath = mkdirForderRetrunForderPath("ttsFile.path") + "tts_"
+                + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3";
+    }
+
+    public void setResultMap(){
+        if (isTtsFile()){
+            final String crateSuccessMessage = "TTS File [" + createFilePath + "] making is Success";
+            logger.info(crateSuccessMessage);
+            resultMap.put("states", crateSuccessMessage);
+            resultMap.put("ttsFileName", createFilePath);
+        } else {
+            resultMap.put("states", "TTS File [" + createFilePath + "] making is Fail");
+        }
+
+    }
+
     public void awsCreateMp3File(){
         try {
-            outputStream = new FileOutputStream(new File(mkdirForderRetrunForderPath("ttsFile.path") + "tts_"
-                    + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3"));
+            outputStream = new FileOutputStream(new File(createFilePath));
             byte[] buffer = new byte[2 * 1024];
             int readBytes;
 
@@ -43,10 +74,10 @@ public class CommonService {
                     outputStream.write(buffer, 0, readBytes);
                 }
             }
-            System.out.println("Audio content written to file" + mkdirForderRetrunForderPath("ttsFile.path")
-                    + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3");
+
+
         } catch (Exception e) {
-            System.err.println(e);
+            logger.error("Create TTS File is Fail. Fail Message: " + e.getMessage());
         } finally {
             try {
                 createMp3FileEnd();
@@ -58,15 +89,13 @@ public class CommonService {
 
     public void googleCreateMp3File(){
         try {
-            outputStream = new FileOutputStream(new File(mkdirForderRetrunForderPath("ttsFile.path") + "tts_"
-                    + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3"));
+            outputStream = new FileOutputStream(new File(createFilePath));
             outputStream.write(ttsService.getBypeString().toByteArray());
-            System.out.println("Audio content written to file" + mkdirForderRetrunForderPath("ttsFile.path")
-                    + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3");
+            logger.info("TTS File [" + createFilePath + "] making is Success");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("Create TTS File is Fail. Fail Message: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Create TTS File is Fail. Fail Message: " + e.getMessage());
         } finally {
             try {
                 createMp3FileEnd();
@@ -89,16 +118,14 @@ public class CommonService {
                 int read = 0;
                 byte[] bytes = new byte[1024];
                 // 랜덤한 이름으로 mp3 파일 생성
-                File f = new File(mkdirForderRetrunForderPath("ttsFile.path") + "tts_"
-                        + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3");
+                File f = new File(createFilePath);
                 f.createNewFile();
                 OutputStream outputStream = new FileOutputStream(f);
                 while ((read =is.read(bytes)) != -1) {
                     outputStream.write(bytes, 0, read);
                 }
                 is.close();
-                System.out.println("Audio content written to file" + mkdirForderRetrunForderPath("ttsFile.path")
-                        + parameterMap.get("type") + "_" + String.valueOf(new Date().getTime()) +".mp3");
+                logger.info("TTS File [" + createFilePath + "] making is Success");
             } else {  // 에러 발생
                 br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
                 String inputLine;
@@ -107,10 +134,10 @@ public class CommonService {
                     response.append(inputLine);
                 }
                 br.close();
-                System.out.println(response.toString());
+                logger.error("Create TTS File is Fail. Fail Message: " + response.toString());
             }
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error("Create TTS File is Fail. Fail Message: " + e.getMessage());
         }
 
     }
@@ -195,6 +222,19 @@ public class CommonService {
         } finally {
             reader.close();
         }
+    }
+
+    public boolean isTtsFile(){
+        if (new File(createFilePath).exists()) return true;
+        else return false;
+    }
+
+    public boolean isAttachFile(MultipartFile multipartFile){
+        return !multipartFile.isEmpty();
+    }
+
+    public void setNotExistFileSetMessage(){
+        resultMap.put("states", "attach file not exist");
     }
 
 

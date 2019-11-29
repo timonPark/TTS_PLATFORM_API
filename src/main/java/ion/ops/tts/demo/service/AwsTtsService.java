@@ -5,10 +5,12 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.polly.AmazonPollyClient;
+import com.amazonaws.services.polly.AmazonPollyClientBuilder;
 import com.amazonaws.services.polly.model.*;
 import com.google.protobuf.ByteString;
 import org.json.simple.parser.ParseException;
@@ -31,9 +33,9 @@ public class AwsTtsService implements TtsService {
     public void run() throws IOException, ClassNotFoundException, ParseException {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(String.valueOf(commonService.keyLoad().get("accessKey")),
                 String.valueOf(commonService.keyLoad().get("secretKey")));
-        polly = new AmazonPollyClient(awsCredentials,
-                new ClientConfiguration());
-        polly.setRegion(Region.getRegion(Regions.AP_NORTHEAST_2));
+        polly = (AmazonPollyClient) AmazonPollyClientBuilder.standard().
+                withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).
+                withRegion(Regions.AP_NORTHEAST_2).build();
         // Create describe voices request.
         DescribeVoicesRequest describeVoicesRequest = new DescribeVoicesRequest();
 
@@ -51,7 +53,9 @@ public class AwsTtsService implements TtsService {
 
     @Override
     public void ttsMp3Download(Map<String, Object> parameterMap) {
+        commonService.setCreateFilePath();
         commonService.awsCreateMp3File();
+        commonService.setResultMap();
     }
 
     @Override

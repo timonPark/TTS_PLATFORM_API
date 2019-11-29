@@ -3,16 +3,17 @@ package ion.ops.tts.demo.run;
 import ion.ops.tts.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class Executor implements ApplicationRunner {
+public class Executor {
 
      @Autowired
      protected CommonService commonService;
@@ -49,14 +50,27 @@ public class Executor implements ApplicationRunner {
      }
 
      public void execute(String type) throws Exception {
+          setTtsService(type);
+          parameterSetting(type);
+          registerCommonServiceInTtsService();
+          ttsService.run();
+          ttsService.ttsMp3Download(parameterMap);
+     }
+
+     public Map<String, Object> responseExecute(String type, MultipartFile multipartFile) throws Exception {
+          if (commonService.isAttachFile(multipartFile)){
+               execute(type);
+          } else {
+               commonService.setNotExistFileSetMessage();
+          }
+          return commonService.getResultMap();
+
+     }
+
+     private void setTtsService(String type){
           if (type.equals("aws")) ttsService = awsTtsService;
           else if (type.equals("google")) ttsService = googleTtsService;
           else if (type.equals("naver")) ttsService = naverTtsService;
-          parameterSetting(type);
-          registerCommonServiceInTtsService();
-
-          ttsService.run();
-          ttsService.ttsMp3Download(parameterMap);
      }
      public void parameterSetting(String type) {
           parameterMap.put("apikey.path", environment.getProperty("apikey.path"));
@@ -72,11 +86,16 @@ public class Executor implements ApplicationRunner {
 
      }
 
-     @Override
+     //@Override
      public void run(ApplicationArguments args) throws Exception {
           //execute("aws");
           //credentialInfoSave("naver");
           //createTestTextFile("naver");
-          credentialInfoSave("aws");
+          //credentialInfoSave("aws");
+     }
+
+     public Response run(String ttsType) throws Exception {
+          execute(ttsType);
+          return null;
      }
 }

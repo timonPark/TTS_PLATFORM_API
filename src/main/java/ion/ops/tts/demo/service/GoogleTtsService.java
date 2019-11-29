@@ -58,7 +58,9 @@ public class GoogleTtsService implements TtsService {
 
     @Override
     public void ttsMp3Download( Map<String, Object> parameterMap) {
+        commonService.setCreateFilePath();
         commonService.googleCreateMp3File();
+        commonService.setResultMap();
     }
 
     @Override

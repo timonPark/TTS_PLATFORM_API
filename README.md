@@ -94,7 +94,6 @@ sample_credential_info(aws,ncp).json파일을 열어서 "사이에 넣어주시�
 ## 프로젝트 실행
 ### IDE를 이용한 실행
 저는 JetBrain 사의 Intellij 라는 IDE를 사용합니다. 프로젝트 트리창에서 DemoApplication파일 우클릭후 Run하면 실행됩니다
-### Gradle 명령어를 이용한 실행
 
 ### java 명령어를 이용한 실행
 Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하여 build하면

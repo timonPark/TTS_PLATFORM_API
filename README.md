@@ -1,4 +1,4 @@
-# TTS_PLAFORM_API
+# TTS_PLATFORM_API
 
 ## 프로젝트를 만들게 된 계기
 현재 SBS 콘텐츠 관리 시스템을 확장개발하는 프로젝트에 참여하고 있는데, 프로젝트 기능 개발 중 하나가 TTS 기능을 개발이었습니다.
@@ -11,8 +11,8 @@ TEXT 데이터를 MP3 파일로 받아오는 기능을 가지고 있습니다. �
 필요합니다. 또한 계정이 있다면 플랫폼 서비스에서 TTS에 해당하는 API인증키를 발급받아야 합니다. 그리고 API 사용하는 방식을
 이해하기 위해서 각 플랫폼에서 제공하는 예제 코드를 숙지하는 함이 필요합니다
 
-## TTS_PLAFORM_API 동작 설명
-저의 경우 웹서버를 띄우고 txt 텍스트 파일과 TTS type(aws, google, ncp)을 TTS 파일 생성 API에 넘기면
+## TTS_PLATFORM_API 동작 설명
+저의 경우 웹서버를 띄우고 txt 텍스트 파일과 TTS type(aws, google, naver)을 TTS 파일 생성 API에 넘기면
 해당 플랫폼으로 부터 만들어진 TTS MP3 파일을 받아오고, 해당 MP3 파일 이름을 key값으로 MP3 파일 경로를
 value값으로 저장하고, key값인 MP3 파일 이름으로 download를 시도하면 다운되는 기능을 해당 프로젝트에서 구현하였습니다
 
@@ -48,3 +48,56 @@ Google: 자체 인증 파일을 제공하기 때문에 해당 파일을 읽어�
 ### 5) 이외 나머지 내용
 RestController 구현, MP3 파일 이름과 경로로 json 화 파일에 key, value로 경로 관리, Mp3 파일 다운로드 등등의
 내용들이 들어있습니다.
+
+## 프로젝트 사용하기 위한 환경설정
+#### application.properties 내용변경
+application.properties을 열면 아래와 같은 내용들이 있습니다
+<pre>
+apikey.path=/Users/m05214_jonghoon/security/
+apikey.google.filename=google_credential_info.json
+apikey.aws.filename=aws_credential_info.json
+apikey.naver.filename=ncp_credential_info.json
+textFile.path=/Users/m05214_jonghoon/TTS/TEXT/
+ttsFile.path=/Users/m05214_jonghoon/TTS/MP3/
+ttsFile.info.manage.path=/Users/m05214_jonghoon/TTS/info.json
+</pre>
+이 내용 중 "apikey.path", "textFile.path", "ttsFile.path", "ttsFile.info.manage.path" 에 대한
+경로를 사용하실 PC의 경로로 바꾸어 놓으셔야합니다
+<pre>
+application.properties 설명
+apikey.path: 인증키가 있는 경로
+apikey.google.filename: 구글 tts Api 인증키 파일 이름입니다 
+apikey.aws.filename: AWS tts Api 인증키 파일 이름입니다 
+apikey.naver.filename: NCP tts Api 인증키 파일 이름입니다 
+textFile.path: 첨부한 파일을 저장한 경로
+ttsFile.path: 플랫폼으로 부터 받은 TTS MP3 파일이 저장된 경로
+ttsFile.info.manage.path: TTS MP3 파일이름과 파일 경로에 대한 데이터를 저장한 파일위치
+</pre>
+
+#### 인증파일에 대한 내용 입력
+src/main/resources/ 경로 아래 보시면 sample_credential_info(aws,ncp).json과
+sample_credential_info(google).json 파일이 있습니다
+1) GCP(Google Cloud Platform)에서 TTS에 대한 인증키 신청을 하면 인증에 대한 파일을 다운받을 수 있습니다
+해당 파일 내용이 sample_credential_info(google).json의 필드값만 일치합니다
+해당 파일을 "google_credential_info.json" 이름으로 바꾸어주시고 application.properties에서
+apikey.path 경로에 입력한 폴더 아래에 넣어주시면 됩니다
+2) AWS, Naver(NCP: Naver Cloud Platform)에서 인증키를 신청한 경우 ID와 패스워드 처럼
+accessKey와 secretKey에 대한 정보를 얻을 수 있습니다. 해당 정보를
+sample_credential_info(aws,ncp).json파일을 열어서 "사이에 넣어주시면 됩니다
+<pre>{"secretKey":"","accessKey":""}</pre>
+해당정보입력이 완료되었습니다 AWS의 경우 "aws_credential_info.json", Naver는 "ncp_credential_info.json"로 파일 이름변경을 합니다
+그리고 apikey.path 경로 폴더 아래 해당 파일을 이동시킵니다
+
+#### JDK 1.8설치
+해당 내용은 "JDK 1.8" 로 구글링하면 많은 내용이 있습니다 설치가 되지 않으신 분들은 설치를 진행하여주세요
+
+## 프로젝트 실행
+### IDE를 이용한 실행
+저는 JetBrain 사의 Intellij 라는 IDE를 사용합니다. 프로젝트 트리창에서 DemoApplication파일 우클릭후 Run하면 실행됩니다
+### Gradle 명령어를 이용한 실행
+
+### java 명령어를 이용한 실행
+Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하여 build하면
+프로젝트 경로 아래 build/libs/demo-0.0.1-SNAPSHOT.war 라는 파일이 
+생성됩니다 terminer에서 해당 경로로 이동후 java -jar demo-0.0.1-SNAPSHOT.war 입력하면 프로젝트가 실행됩니다
+

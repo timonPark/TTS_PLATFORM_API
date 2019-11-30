@@ -18,24 +18,28 @@ value값으로 저장하고, key값인 MP3 파일 이름으로 download를 시�
 
 ## TTS API 구현에 필요한 내용
 대략적인 절차는 다음과 같습니다
+
 ### 1) 플랫폼 선택(aws, google, ncp)
 TtsService라는 인터페이스를 구현후 이를 상속하여 AwsTtsService, GoogleTtsService, NaverTtsService
 구현하였습니다. ttsType 값을 받아서 TtsService 변수에 주입하는 방식을 채택하였습니다.
 
 ### 2) 플랫폼 인증
-TtsService 인터페이스에서 정의한 Run 메소드에서 인증방식과 입력값을 성정하였습니다.
-
-각 플랫폼 인증 방식은 다음과 같습니다
+TtsService 인터페이스에서 정의한 Run 메소드에서 인증방식과 입력값을 설정하였습니다.
+각 플랫폼 인증 방식은 다음과 같습니다 
+<pre>
 AWS, Naver: id, pw(저는 accessKey, secreKey로 표현했습니다)
 Google: 자체 인증 파일을 제공하기 때문에 해당 파일을 읽어오도록 구현했습니다
+</pre>
 
 ### 3) TTS MP3 파일 생성에 필요한 파라미터 값
 설정 값에는 다음과 같은 내용이 있습니다.
+<pre>
 3-1) Text: 문자 * 필수
 3-2) 목소리(aws, naver) * 필수
 3-3) 언어(google) * 필수
 3-4) 성별(google) * 필수
 3-5) 그외: 속도, 음의 높낮이 <- 해당내용은 구현에 없습니다
+</pre>
 
 ### 4) TTS MP3 저장하는 방식
 각 플랫폼마다 MP3를 저장하는 방식이 다르기때문에 {플랫폼타입}CreateMp3File()로 메소드를 만들어서 구현하였습니다

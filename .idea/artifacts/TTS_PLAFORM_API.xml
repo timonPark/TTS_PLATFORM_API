@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="TTS_PLAFORM_API">
+    <output-path>$PROJECT_DIR$/out</output-path>
+    <root id="archive" name="TTS_PLAFORM_API.war" />
+  </artifact>
+</component>

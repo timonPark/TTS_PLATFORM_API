@@ -1,7 +1,5 @@
 package ion.ops.tts.demo.service;
 
-import com.google.gson.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -170,7 +168,7 @@ public class CommonService {
         if (String.valueOf(parameterMap.get("type")).equals("aws")){
             jsonObject.put("accessKey", "");
             jsonObject.put("secretKey", "");
-        } else if (String.valueOf(parameterMap.get("type")).equals("ncp")){
+        } else if (String.valueOf(parameterMap.get("type")).equals("naver")){
             jsonObject.put("clientId", "");
             jsonObject.put("clientSecret", "");
         }

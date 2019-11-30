@@ -8,6 +8,11 @@ group = 'ion.ops.tts'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+apply plugin: 'war'
+war {
+    baseName = '[TTS_PLAFORM_API]'
+}
+
 repositories {
     mavenCentral()
 }
@@ -29,6 +34,7 @@ dependencies {
     compile group: 'com.google.cloud', name: 'google-cloud-texttospeech', version: '0.117.0-beta'
     compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.0.RELEASE'
+    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }
 
 test {

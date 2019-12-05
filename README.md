@@ -114,7 +114,7 @@ http://localhost:8080/create/google
 http://localhost:8080/create/naver
 </pre>
 
-#### 2. 텍스트 파일안에 TTSfh 변경할 Text 내용을 입력후 저장
+#### 2. 텍스트 파일안에 TTS로 변경할 Text 내용을 입력후 저장
 #### 3. 저장한 Text 파일을 Request Body에 file이라는 필드로 파일첨부
 #### 4. Api Response 값 필드 중 ttsFileName의 value 값 내용 따로기억하기
 -> 다운로드 때 키값으로 사용

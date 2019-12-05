@@ -100,9 +100,9 @@ Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하
 프로젝트 경로 아래 build/libs/demo-0.0.1-SNAPSHOT.war 라는 파일이 
 생성됩니다 terminer에서 해당 경로로 이동후 java -jar demo-0.0.1-SNAPSHOT.war 입력하면 프로젝트가 실행됩니다
 
-### API 설명
-#### TTS 생성
-1.API URL 설정
+## API 설명
+### TTS 생성
+#### 1.API URL 설정
 <br>
 {WAS IP: WAS PORT NUMBER}/create/{tts_type}
 <br>
@@ -114,11 +114,11 @@ localhost:8080/create/aws
 localhost:8080/create/google
 localhost:8080/create/naver
 </pre>
-2. 텍스트 파일안에 TTSfh 변경할 Text 내용을 입력후 저장
-3. 저장한 Text 파일을 Request Body에 file이라는 필드로 파일첨부
-4. Api Response 값 필드 중 ttsFileName의 value 값 내용 따로기억하기
+#### 2. 텍스트 파일안에 TTSfh 변경할 Text 내용을 입력후 저장
+#### 3. 저장한 Text 파일을 Request Body에 file이라는 필드로 파일첨부
+#### 4. Api Response 값 필드 중 ttsFileName의 value 값 내용 따로기억하기
 -> 다운로드 때 키값으로 사용
-#### TTS 다운로드
+### TTS 다운로드
 
 
 

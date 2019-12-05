@@ -102,7 +102,7 @@ Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하
 
 ## API 설명
 ### TTS 생성
-![Alt text](./image/api 사용법 2.png)
+![Alt text](./image/api_use.png)
 #### 1.API URL 설정
 http://{WAS IP: WAS PORT NUMBER}/create/{tts_type}
 <br>

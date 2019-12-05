@@ -103,8 +103,11 @@ Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하
 ### API 설명
 #### TTS 생성
 1.API URL 설정
+<br>
 {WAS IP: WAS PORT NUMBER}/create/{tts_type}
+<br>
 tts_type -> google, aws, naver
+<br>
 예시
 <pre>
 localhost:8080/create/aws

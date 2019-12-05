@@ -1,6 +1,7 @@
 package ion.ops.tts.demo.run;
 
 import ion.ops.tts.demo.service.*;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -82,9 +83,11 @@ public class Executor {
           parameterMap.put("ttsFile.info.manage.path", environment.getProperty("ttsFile.info.manage.path"));
           parameterMap.put("type", type);
      }
-     public void registerCommonServiceInTtsService() {
-          ttsService.setParameterMap(parameterMap);
-          commonService.setTtsService(ttsService);
+     public void registerCommonServiceInTtsService(String type) {
+          if (!type.equals("")){
+               ttsService.setParameterMap(parameterMap);
+               commonService.setTtsService(ttsService);
+          }
           commonService.setParameterMap(parameterMap);
 
      }
@@ -103,12 +106,13 @@ public class Executor {
      }
 
      public ResponseEntity<InputStreamResource> ttsFileDownload(String fileName) throws IOException, ParseException {
+          initSetting("");
           return commonService.downloadTtsFile(fileName);
      }
 
      public void initSetting(String type){
-          setTtsService(type);
+          if (!type.equals("")) setTtsService(type);
           parameterSetting(type);
-          registerCommonServiceInTtsService();
+          registerCommonServiceInTtsService(type);
      }
 }

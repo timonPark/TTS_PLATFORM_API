@@ -101,9 +101,14 @@ Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하
 생성됩니다 terminer에서 해당 경로로 이동후 java -jar demo-0.0.1-SNAPSHOT.war 입력하면 프로젝트가 실행됩니다
 
 ## API 설명
+실행은 포스트맨에서 진행합니다.
+<br>
+포스트맨 홈페이지:
+https://www.getpostman.com/downloads/
 ### TTS 생성
 ![Alt text](./image/api_use.png)
 #### 1.API URL 설정
+Method는 POST 방식입니다
 http://{WAS IP: WAS PORT NUMBER}/create/{tts_type}
 <br>
 tts_type -> google, aws, naver
@@ -120,6 +125,7 @@ http://localhost:8080/create/naver
 #### 4. Api Response 값 필드 중 ttsFileName의 value 값 내용 따로기억하기
 -> 다운로드 때 키값으로 사용
 ### TTS 다운로드
+Method는 Get 방식입니다
 
 
 

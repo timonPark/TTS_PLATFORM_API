@@ -103,16 +103,15 @@ Gradle 명령어를 이용하여 Build를 하거나 또는 Intellij를 이용하
 ## API 설명
 ### TTS 생성
 #### 1.API URL 설정
-<br>
-{WAS IP: WAS PORT NUMBER}/create/{tts_type}
+http://{WAS IP: WAS PORT NUMBER}/create/{tts_type}
 <br>
 tts_type -> google, aws, naver
 <br>
 예시
 <pre>
-localhost:8080/create/aws
-localhost:8080/create/google
-localhost:8080/create/naver
+http://localhost:8080/create/aws
+http://localhost:8080/create/google
+http://localhost:8080/create/naver
 </pre>
 
 #### 2. 텍스트 파일안에 TTSfh 변경할 Text 내용을 입력후 저장

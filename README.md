@@ -130,6 +130,9 @@ http://localhost:8080/create/naver
 #### 3. 저장한 Text 파일을 Request Body에 file이라는 필드로 파일첨부
 #### 4. Api Response 값 필드 중 ttsFileName의 value 값 내용 따로기억하기
 -> 다운로드 때 키값으로 사용
+### TTS 파일리스트 조회
+http://{WAS IP: WAS PORT NUMBER}/list
+
 ### TTS 다운로드
 ![Alt text](./image/api_use2.png)
 Method는 Get 방식입니다

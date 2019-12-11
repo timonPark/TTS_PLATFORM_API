@@ -115,4 +115,9 @@ public class Executor {
           parameterSetting(type);
           registerCommonServiceInTtsService(type);
      }
+
+     public Map<String, Object> responseTtsFileNameList() throws Exception {
+          initSetting("");
+          return commonService.ttsFileList();
+     }
 }

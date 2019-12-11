@@ -31,4 +31,9 @@ public class TtsController {
         return executor.ttsFileDownload(fileName);
     }
 
+    @GetMapping("/list")
+    public Map<String, Object> selectTTSFileList() throws Exception {
+        return executor.responseTtsFileNameList();
+    }
+
 }

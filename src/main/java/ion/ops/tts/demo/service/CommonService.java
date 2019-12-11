@@ -19,10 +19,7 @@ import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class CommonService {
@@ -286,6 +283,19 @@ public class CommonService {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(fileReader);
         return String.valueOf(jsonObject.get(ttsFileName));
+    }
+
+    public Map<String, Object> ttsFileList() throws IOException, ParseException {
+        FileReader fileReader = new FileReader(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(fileReader);
+        Iterator<String> jsonObjectKeySet = jsonObject.keySet().iterator();
+        int count = 1;
+        while (jsonObjectKeySet.hasNext()) {
+            resultMap.put("file_" + count, jsonObjectKeySet.next());
+            count++;
+        }
+        return resultMap;
     }
 
     public ResponseEntity<InputStreamResource> downloadTtsFile(String ttsFileName) throws IOException, ParseException {

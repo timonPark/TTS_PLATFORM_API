@@ -1,5 +1,6 @@
 package ion.ops.tts.demo.run;
 
+import ion.ops.tts.demo.domain.Param;
 import ion.ops.tts.demo.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.parser.ParseException;
@@ -41,10 +42,13 @@ public class Executor {
           parameterMap = new HashMap<String, Object>();
      }
 
-     public void credentialInfoSave(String type) throws IOException {
+     public Map<String, Object> apiKeyStore(String id, String pw, String type, MultipartFile file) throws IOException {
           parameterSetting(type);
           commonService.setParameterMap(parameterMap);
-          commonService.keyStore();
+          String state = commonService.keyStore(id, pw, type, file);
+          parameterMap.clear();
+          parameterMap.put("state", state);
+          return parameterMap;
      }
 
      private void createTestTextFile(String type) throws IOException {

@@ -1,5 +1,7 @@
 package ion.ops.tts.demo.service;
 
+import ion.ops.tts.demo.domain.Param;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.validation.constraints.Null;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
@@ -155,23 +158,78 @@ public class CommonService {
     public void createMp3FileEnd() throws IOException {
         outputStream.close();
     }
-    public void keyStore() throws IOException {
-        if (String.valueOf(parameterMap.get("type")).equals("google")) return;
-        String fileNameKey = "apikey." + String.valueOf(parameterMap.get("type")) +".filename";
-        FileWriter file = new FileWriter(String.valueOf(parameterMap.get("apikey.path"))
-                + parameterMap.get(fileNameKey));
-
+    public String keyStore(String id, String pw, String type, MultipartFile attachFile)  {
+        String result = null;
+        String fileNameKey = "apikey." + type +".filename";
         JSONObject jsonObject = new JSONObject();
-        if (String.valueOf(parameterMap.get("type")).equals("aws")){
-            jsonObject.put("accessKey", "");
-            jsonObject.put("secretKey", "");
-        } else if (String.valueOf(parameterMap.get("type")).equals("naver")){
-            jsonObject.put("clientId", "");
-            jsonObject.put("clientSecret", "");
-        }
+        if (String.valueOf(parameterMap.get("type")).equals("aws") ||
+                String.valueOf(parameterMap.get("type")).equals("naver")){
+            try {
+                if (StringUtils.isEmpty(id)) throw new NullPointerException();
+                else if (StringUtils.isEmpty(pw)) throw new NullPointerException();
+                else {}
+                File forder = new File(String.valueOf(parameterMap.get("apikey.path")));
+                if (!forder.exists()){
+                    try {
+                        forder.mkdir();
+                    } catch (Exception e){
+                        logger.error(e.getMessage());
+                    }
+                }
+                FileWriter file = new FileWriter(String.valueOf(parameterMap.get("apikey.path"))
+                        + parameterMap.get(fileNameKey));
+                if (type.equals("aws")){
+                    jsonObject.put("accessKey", id);
+                    jsonObject.put("secretKey", pw);
+                } else if (type.equals("naver")){
+                    jsonObject.put("clientId", id);
+                    jsonObject.put("clientSecret", pw);
+                }
+                file.write(jsonObject.toJSONString());
+                file.close();
+                result = "success";
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                logger.error("api 키 저장중 오류가 발생하였습니다");
+                result = "fail";
+            } catch (NullPointerException e) {
+                logger.error(e.getMessage());
+                logger.error("id 또는 pw가 비어 있습니다");
+                result = "fail";
+            }
+        } else {
+            if (type.equals("google")) {
+                FileOutputStream fos = null;
+                try {
+                    if (attachFile == null) throw new NullPointerException();
+                    byte[] bytes = attachFile.getBytes();
+                    fos = new FileOutputStream(String.valueOf(parameterMap.get("apikey.path"))
+                            + parameterMap.get(fileNameKey));
+                    fos.write(bytes);
+                } catch(IOException e) {
+                    logger.error(e.getMessage());
+                    logger.error("api 키 저장중 오류가 발생하였습니다");
+                    result = "fail";
+                } catch (NullPointerException e){
+                    logger.error(e.getMessage());
+                    logger.error("google api 인증파일이 첨부되지 않았습니다");
+                    result = "fail";
+                }finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                            result = "success";
+                        } catch (Exception e) {
+                            logger.error(e.getMessage());
+                            logger.error("api 키 저장중 오류가 발생하였습니다");
+                            result = "fail";
+                        }
+                    }
+                }
 
-        file.write(jsonObject.toJSONString());
-        file.close();
+            }
+        }
+        return result;
     }
 
     public JSONObject keyLoad() throws IOException, ClassNotFoundException, ParseException {
@@ -299,9 +357,18 @@ public class CommonService {
     }
 
     public ResponseEntity<InputStreamResource> downloadTtsFile(String ttsFileName) throws IOException, ParseException {
+        File ttsFile = null;
+        InputStreamResource resource = null;
+        try {
+            ttsFile = new File(ttsManageFileSearchByTtsFileName(ttsFileName));
+            resource = new InputStreamResource(new FileInputStream(ttsFile));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } catch (ParseException e2) {
+            logger.error(e2.getMessage());
+        }
 
-        File ttsFile = new File(ttsManageFileSearchByTtsFileName(ttsFileName));
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(ttsFile));
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + ttsFileName)
                 .contentType(MediaType.parseMediaType("audio/mpeg"))

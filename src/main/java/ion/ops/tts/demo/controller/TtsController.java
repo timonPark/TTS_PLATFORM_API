@@ -1,5 +1,6 @@
 package ion.ops.tts.demo.controller;
 
+import ion.ops.tts.demo.domain.Param;
 import ion.ops.tts.demo.run.Executor;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,12 @@ public class TtsController {
     @PostMapping("/create/{ttsType}")
     public Map<String, Object> createTTS(@PathVariable String ttsType, @RequestParam("file") MultipartFile file) throws Exception {
         return executor.responseExecute(ttsType, file);
+    }
+
+    @PostMapping("/register")
+    public Map<String, Object> registerKey(@RequestParam(required = false) String id, @RequestParam(required = false) String pw,
+                                           @RequestParam String type, @RequestParam(required = false) MultipartFile file) throws IOException {
+        return executor.apiKeyStore(id, pw, type, file);
     }
 
     //http://localhost:8080/download/{filename}

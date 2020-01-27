@@ -2,22 +2,20 @@ plugins {
     id 'org.springframework.boot' version '2.2.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
+    id 'com.bmuschko.docker-spring-boot-application' version '6.1.2'
 }
 
-group = 'ion.ops.tts'
+group = 'dinosaur'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
-apply plugin: 'war'
-war {
-    baseName = '[TTS_PLAFORM_API]'
-}
-
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
+
     implementation 'org.springframework.boot:spring-boot-starter'
     compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.2.0.RELEASE'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -34,9 +32,25 @@ dependencies {
     compile group: 'com.google.cloud', name: 'google-cloud-texttospeech', version: '0.117.0-beta'
     compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.0.RELEASE'
-    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+    compile group: 'com.bmuschko', name: 'gradle-docker-plugin', version: '6.1.2'
 }
 
-test {
-    useJUnitPlatform()
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+task createDockerfile (type: Dockerfile) {
+    destFile = project.file('build/docker/Dockerfile')
+
+    from 'openjdk:8-jdk-alpine'
+    runCommand 'mkdir /sourch'
+    exposePort 18899
+    addFile ('./build/libs/tts_platform_api-0.0.1-SNAPSHOT.war', '/source')
+    runCommand 'touch /source/tts_platform_api-0.0.1-SNAPSHOT.war'
+    entryPoint ("java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/source/tts_platform_api-0.0.1-SNAPSHOT.war")
+}
+
+task buildDockerImage(type: DockerBuildImage) {
+    dependsOn createDockerfile
+    dockerFile = project.file('build/docker/Dockerfile')
+    inputDir = project.projectDir
 }

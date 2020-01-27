@@ -1,6 +1,5 @@
 package ion.ops.tts.demo.service;
 
-import ion.ops.tts.demo.domain.Param;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.simple.JSONObject;
@@ -15,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import javax.validation.constraints.Null;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;

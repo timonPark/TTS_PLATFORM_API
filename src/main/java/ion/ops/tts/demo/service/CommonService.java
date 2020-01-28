@@ -341,14 +341,30 @@ public class CommonService {
     }
 
     public Map<String, Object> ttsFileList() throws IOException, ParseException {
-        FileReader fileReader = new FileReader(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) parser.parse(fileReader);
-        Iterator<String> jsonObjectKeySet = jsonObject.keySet().iterator();
-        int count = 1;
-        while (jsonObjectKeySet.hasNext()) {
-            resultMap.put("file_" + count, jsonObjectKeySet.next());
-            count++;
+        File file = new File(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+        if (!file.exists()) {
+            File ttsForder = new File(String.valueOf(parameterMap.get("ttsforder.path")));
+            if (!ttsForder.exists()) ttsForder.mkdirs();
+            file.createNewFile();
+        } else {
+            FileReader fileReader = new FileReader(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = (JSONObject) parser.parse(fileReader);
+                Iterator<String> jsonObjectKeySet = jsonObject.keySet().iterator();
+                int count = 1;
+                while (jsonObjectKeySet.hasNext()) {
+                    resultMap.put("file_" + count, jsonObjectKeySet.next());
+                    count++;
+                }
+            } catch (ParseException e) {
+                logger.error(e.getMessage());
+                logger.error("리스트가 존재하지 않습니다.");
+                resultMap.put("error", "errorMessage: " +e.getMessage() + ", 리스트가 존재하지 않습니다.");
+            }
+
+
         }
         return resultMap;
     }

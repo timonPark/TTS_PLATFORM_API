@@ -85,6 +85,7 @@ public class Executor {
           parameterMap.put("textFile.path", environment.getProperty("textFile.path"));
           parameterMap.put("ttsFile.path", environment.getProperty("ttsFile.path"));
           parameterMap.put("ttsFile.info.manage.path", environment.getProperty("ttsFile.info.manage.path"));
+          parameterMap.put("ttsforder.path", environment.getProperty("ttsforder.path"));
           parameterMap.put("type", type);
      }
      public void registerCommonServiceInTtsService(String type) {

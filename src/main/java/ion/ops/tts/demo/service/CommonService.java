@@ -159,20 +159,20 @@ public class CommonService {
         String result = null;
         String fileNameKey = "apikey." + type +".filename";
         JSONObject jsonObject = new JSONObject();
+        File forder = new File(String.valueOf(parameterMap.get("apikey.path")));
+        if (!forder.exists()){
+            try {
+                forder.mkdir();
+            } catch (Exception e){
+                logger.error(e.getMessage());
+            }
+        }
         if (String.valueOf(parameterMap.get("type")).equals("aws") ||
                 String.valueOf(parameterMap.get("type")).equals("naver")){
             try {
                 if (StringUtils.isEmpty(id)) throw new NullPointerException();
                 else if (StringUtils.isEmpty(pw)) throw new NullPointerException();
                 else {}
-                File forder = new File(String.valueOf(parameterMap.get("apikey.path")));
-                if (!forder.exists()){
-                    try {
-                        forder.mkdir();
-                    } catch (Exception e){
-                        logger.error(e.getMessage());
-                    }
-                }
                 FileWriter file = new FileWriter(String.valueOf(parameterMap.get("apikey.path"))
                         + parameterMap.get(fileNameKey));
                 if (type.equals("aws")){

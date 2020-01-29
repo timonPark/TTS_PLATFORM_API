@@ -5,6 +5,7 @@ plugins {
     id 'com.bmuschko.docker-spring-boot-application' version '6.1.2'
 }
 
+
 group = 'dinosaur'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
@@ -32,25 +33,24 @@ dependencies {
     compile group: 'com.google.cloud', name: 'google-cloud-texttospeech', version: '0.117.0-beta'
     compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.0.RELEASE'
-    compile group: 'com.bmuschko', name: 'gradle-docker-plugin', version: '6.1.2'
+    compile group: 'com.bmuschko', name: 'gradle-docker-plugin', version: '5.0.0'
 }
 
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 
 task createDockerfile (type: Dockerfile) {
-    destFile = project.file('build/docker/Dockerfile')
-
-    from 'openjdk:8-jdk-alpine'
-    runCommand 'mkdir /sourch'
-    exposePort 18899
-    addFile ('./build/libs/tts_platform_api-0.0.1-SNAPSHOT.war', '/source')
-    runCommand 'touch /source/tts_platform_api-0.0.1-SNAPSHOT.war'
-    entryPoint ("java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/source/tts_platform_api-0.0.1-SNAPSHOT.war")
+    from 'm05214/jdkandgradle'
+    label(['maintainer': 'dinosaurUncle "jh05214@gmail.com"'])
+    workingDir '/app'
+    copyFile ('libs', 'libs/')
+    copyFile ('resources', 'resources/')
+    copyFile ('classes', 'classes/')
+    entryPoint ("java", "-cp", "/app/resources:/app/classes:/app/libs/*", "ion.ops.tts.demo.DemoApplication")
+    exposePort(18899)
 }
 
 task buildDockerImage(type: DockerBuildImage) {
-    dependsOn createDockerfile
-    dockerFile = project.file('build/docker/Dockerfile')
-    inputDir = project.projectDir
+    dockerFile = project.file("build/docker/Dockerfile")
+    images.add('dinosaur/tts_platform_api:latest')
 }

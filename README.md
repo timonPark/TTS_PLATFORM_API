@@ -8,11 +8,14 @@ $ ./gradlew build clean
 # 프로젝트 빌드
 $ ./gradlew build
 
-# 빌드 내부의 도커 폴더 및 파일 생성(기본)
-$ ./gradlew build dockerCreateDockerfile
-
 # 도커파일 생성 스크립트 실행 
 $ ./gradlew build createDockerfile
+
+# 도커파일 생성된 경로 아래 libs 폴더 생성
+$ mkdir ./build/docker/libs
+
+# ./build/docker/libs 아래 경로에 빌드된 war 파일 복사
+$ cp ./build/libs/*.war ./build/docker/libs/tts_platform_api.war 
 
 # 생성된 도커 파일로 도커 이미지 생성
 $ ./gradlew build buildDockerImage

@@ -50,5 +50,5 @@ task createDockerfile (type: Dockerfile) {
 
 task buildDockerImage(type: DockerBuildImage) {
     dockerFile = project.file("build/docker/Dockerfile")
-    images.add('dinosaur/tts_platform_api:latest')
+    images.add('tts_platform_api:latest')
 }

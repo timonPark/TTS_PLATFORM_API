@@ -272,7 +272,7 @@ public class CommonService {
     }
 
     public String readTextFile(String filePath) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader (filePath));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),"UTF8"));
         String         line = null;
         StringBuilder  stringBuilder = new StringBuilder();
         String         ls = System.getProperty("line.separator");

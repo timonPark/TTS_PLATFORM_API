@@ -3,8 +3,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
     id 'com.bmuschko.docker-spring-boot-application' version '6.1.2'
+    id 'war'
 }
-
 
 group = 'dinosaur'
 version = '0.0.1-SNAPSHOT'
@@ -40,13 +40,11 @@ import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 
 task createDockerfile (type: Dockerfile) {
-    from 'm05214/jdkandgradle'
+    from 'm05214/container'
     label(['maintainer': 'dinosaurUncle "jh05214@gmail.com"'])
     workingDir '/app'
     copyFile ('libs', 'libs/')
-    copyFile ('resources', 'resources/')
-    copyFile ('classes', 'classes/')
-    entryPoint ("java", "-cp", "/app/resources:/app/classes:/app/libs/*", "ion.ops.tts.demo.DemoApplication")
+    entryPoint ("java", "-jar", "/app/libs/tts_platform_api.war")
     exposePort(18899)
 }
 

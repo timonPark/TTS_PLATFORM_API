@@ -1,8 +1,6 @@
 package ion.ops.tts.demo.run;
 
-import ion.ops.tts.demo.domain.Param;
 import ion.ops.tts.demo.service.*;
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -125,8 +123,13 @@ public class Executor {
           initSetting("");
           return commonService.ttsFileList();
      }
-     public Map<String, Object> isExistApiKey(String ttsType) throws Exception {
+     public Map<String, Object> isExistApiKey(String ttsType) {
           initSetting(ttsType);
           return commonService.returnIsApikey(ttsType);
+     }
+
+     public Map<String, Object> ttsFileDelete(String fileName) {
+          initSetting("");
+          return commonService.ttsFileDelete(fileName);
      }
  }

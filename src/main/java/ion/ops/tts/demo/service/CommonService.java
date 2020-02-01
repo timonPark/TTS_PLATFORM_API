@@ -342,6 +342,7 @@ public class CommonService {
     }
 
     public Map<String, Object> ttsFileList() throws IOException, ParseException {
+        resultMap.clear();
         File file = new File(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
         if (!file.exists()) {
             File ttsForder = new File(String.valueOf(parameterMap.get("ttsforder.path")));
@@ -391,7 +392,7 @@ public class CommonService {
     }
 
     public Map<String, Object> returnIsApikey(String ttsType) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.clear();
         if (!(ttsType.equals("naver") || ttsType.equals("aws") || ttsType.equals("google"))) {
             resultMap.put("state", "fail");
             throw new InvalidParameterException("잘못된 파라미터 값입니다. 허용범위: naver, aws, google");
@@ -400,6 +401,66 @@ public class CommonService {
         resultMap.put("isApiKey", apiKeyFile.exists());
         resultMap.put("state", "success");
         return resultMap;
+    }
+
+    public Map<String, Object> ttsFileDelete(String fileName) {
+        resultMap.clear();
+        deleteTtsFile(fileName);
+        deleteTtsFileRecord(fileName);
+        resultMap.put("deleteFileName", fileName);
+        resultMap.put("message", "delete success");
+        return resultMap;
+    }
+
+    private void deleteTtsFileRecord(String fileName) {
+        File file = new File(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+        if (!file.exists()) {
+            throw new NullPointerException("TTS 파일이 한 건도 등록되어 있지 않습니다");
+        }
+        try {
+            FileReader fileReader = new FileReader(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = null;
+            jsonObject = (JSONObject) parser.parse(fileReader);
+            if (jsonObject.containsKey(fileName)) {
+                jsonObject.remove(fileName);
+                fileReader.close();
+                FileWriter fileWriter = new FileWriter(String.valueOf(parameterMap.get("ttsFile.info.manage.path")));
+                fileWriter.write(jsonObject.toJSONString());
+                fileWriter.close();
+                logger.info("TTS 파일명: [" + fileName + "] 의 기록이 삭제되었습니다.");
+            } else {
+                throw new NullPointerException("TTS 파일명: [" + fileName + " ]이 등록되어 있지 않습니다");
+            }
+        } catch (ParseException e) {
+            logger.error(e.getMessage());
+            logger.error("리스트가 존재하지 않습니다.");
+            resultMap.put("error", "errorMessage: " +e.getMessage() + ", 리스트가 존재하지 않습니다.");
+        } catch (IOException e) {
+
+        } catch (NullPointerException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void deleteTtsFile(String fileName) {
+        File ttsFile = null;
+        try {
+            ttsFile = new File(ttsManageFileSearchByTtsFileName(fileName));
+            if (!ttsFile.exists()) {
+                throw new NullPointerException("TTS 파일명: [" + fileName + "]이 존재하지 않습니다.");
+            } else {
+                if (ttsFile.delete()) {
+                    logger.info("TTS 파일명: [" + fileName + "]이 삭제 되었습니다.");
+                }  else {
+                    throw new IOException("TTS 파일명: [" + fileName + "] 삭제 실패하였습니다.");
+                }
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } catch (ParseException e2) {
+            logger.error(e2.getMessage());
+        }
     }
 
 

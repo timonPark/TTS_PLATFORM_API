@@ -1,6 +1,5 @@
 package ion.ops.tts.demo.controller;
 
-import ion.ops.tts.demo.domain.Param;
 import ion.ops.tts.demo.run.Executor;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +43,13 @@ public class TtsController {
     }
 
     @GetMapping("/isApiKey/{ttsType}")
-    public Map<String, Object> isExistApiKey(@PathVariable String ttsType) throws Exception {
+    public Map<String, Object> isExistApiKey(@PathVariable String ttsType) {
         return executor.isExistApiKey(ttsType);
+    }
+
+    @GetMapping("/delete/{fileName}")
+    public Map<String, Object> ttsFileDelete(@PathVariable String fileName) {
+        return executor.ttsFileDelete(fileName);
     }
 
 }

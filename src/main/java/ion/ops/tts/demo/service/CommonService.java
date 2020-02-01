@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 @Component
@@ -387,6 +388,18 @@ public class CommonService {
                 .contentType(MediaType.parseMediaType("audio/mpeg"))
                 .contentLength(ttsFile.length())
                 .body(resource);
+    }
+
+    public Map<String, Object> returnIsApikey(String ttsType) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        if (!(ttsType.equals("naver") || ttsType.equals("aws") || ttsType.equals("google"))) {
+            resultMap.put("state", "fail");
+            throw new InvalidParameterException("잘못된 파라미터 값입니다. 허용범위: naver, aws, google");
+        }
+        File apiKeyFile = new File(String.valueOf(parameterMap.get("apikey.path")) + String.valueOf(parameterMap.get("apikey." + ttsType +".filename")) );
+        resultMap.put("isApiKey", apiKeyFile.exists());
+        resultMap.put("state", "success");
+        return resultMap;
     }
 
 

@@ -43,4 +43,9 @@ public class TtsController {
         return executor.responseTtsFileNameList();
     }
 
+    @GetMapping("/isApiKey/{ttsType}")
+    public Map<String, Object> isExistApiKey(@PathVariable String ttsType) throws Exception {
+        return executor.isExistApiKey(ttsType);
+    }
+
 }

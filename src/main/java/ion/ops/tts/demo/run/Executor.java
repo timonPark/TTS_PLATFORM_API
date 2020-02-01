@@ -125,4 +125,8 @@ public class Executor {
           initSetting("");
           return commonService.ttsFileList();
      }
-}
+     public Map<String, Object> isExistApiKey(String ttsType) throws Exception {
+          initSetting(ttsType);
+          return commonService.returnIsApikey(ttsType);
+     }
+ }

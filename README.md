@@ -1,7 +1,7 @@
 # TTS_PLATFORM_API
 
 ## Project 버전 정보
-Gradle 5.2 버전이상
+Gradle 5.2 버전이상(아래 빌드 사용시 필요, 애플리케이션 구동과는 별도)
 Jdk 1.8 이상
 
 ## build 명령어 모음

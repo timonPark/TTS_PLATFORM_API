@@ -24,6 +24,9 @@ $ ./gradlew build buildDockerImage
 $ docker run -d -p 18899:18899 --name tts_platform_api_container dinosaur/tts_platform_api 
 </pre>
 
+## Docker Hub 주소
+https://hub.docker.com/repository/docker/m05214/tts_platform_api
+
 ## 프로젝트를 만들게 된 계기
 현재 SBS 콘텐츠 관리 시스템을 확장개발하는 프로젝트에 참여하고 있는데, 프로젝트 기능 개발 중 하나가 TTS 기능을 개발이었습니다.
 TTS에 대한 지식이 아무것도 없었고, 공부를 해야 하는 입장이었기 때문에 시제품을 먼저 만들어서 개발에 대한 윤곽이 필요했습니다.

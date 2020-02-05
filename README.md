@@ -1,9 +1,16 @@
 # TTS_PLATFORM_API
 
+## Project 버전 정보
+Gradle 5.2 버전이상
+Jdk 1.8 이상
+
 ## build 명령어 모음
 <pre>
 # 프로젝트 빌드 클린
 $ ./gradlew build clean
+
+# 오류: 기본 클래스 org.gradle.wrapper.GradleWrapperMain을(를) 찾거나 로드할 수 없습니다. 발생했을때 조치방법
+$ gradle wrap
 
 # 프로젝트 빌드
 $ ./gradlew build
